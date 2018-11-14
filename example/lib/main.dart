@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       await Thumbnails.getThumbnail(
-        thumbOutputFile: '/storage/emulated/0/Whatsapp/Media/Test${TimeOfDay.now()}.jpg.png',
+        thumbOutputFile: '/storage/emulated/0/Whatsapp/Media/Test${TimeOfDay.now()}.jpg',
         videoFile: '/storage/emulated/0/Whatsapp/Media/.Statuses/Testvid.mp4',
         imageType: ThumbFormat.PNG,
         quality: 30

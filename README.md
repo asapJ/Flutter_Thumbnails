@@ -1,6 +1,6 @@
 # thumbnails
 
-A new flutter plugin project.
+A Flutter Plugin to generate thumbnails from videos on Android devices
 
 ## Getting Started
 
