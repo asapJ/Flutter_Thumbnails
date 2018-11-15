@@ -1,6 +1,6 @@
 # thumbnails
 
-A Flutter Plugin to generate thumbnails from videos.
+A Flutter Plugin to generate thumbnails from videos on Local Storage.
 
 ## Compatibility
 Android OS only
@@ -9,6 +9,9 @@ Android OS only
 
 #### Depend on it
 add `thumbnails` as a dependency in your pubspec.yaml file.
+``` yaml
+        thumbnails: ^1.0.1
+```
 
 #### Update Android Permissions
 add the lines to AndroidManifest.xml
