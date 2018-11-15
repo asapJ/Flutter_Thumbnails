@@ -2,6 +2,7 @@ package com.asapjay.thumbnails;
 
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -23,9 +24,15 @@ public class ThumbnailsPlugin implements MethodCallHandler {
     /**
      * Plugin registration.
      */
+    private Registrar mRegistrar;
+
+    private ThumbnailsPlugin(Registrar mRegistrar) {
+        this.mRegistrar = mRegistrar;
+    }
+
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "thumbnails");
-        channel.setMethodCallHandler(new ThumbnailsPlugin());
+        channel.setMethodCallHandler(new ThumbnailsPlugin(registrar));
     }
 
     @Override
@@ -38,8 +45,8 @@ public class ThumbnailsPlugin implements MethodCallHandler {
             int imageType = (int) arguments.get("thumbnailFormat");
             int quality = (int) arguments.get("thumbnailQuality");
             try {
-                buildThumbnail(videoFile, thumbOutputFile, imageType, quality);
-                result.success("success");
+                String thumbnailPath = buildThumbnail(videoFile, thumbOutputFile, imageType, quality);
+                result.success(thumbnailPath);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
@@ -48,25 +55,73 @@ public class ThumbnailsPlugin implements MethodCallHandler {
         }
     }
 
-    private void buildThumbnail(String vidPath, String thumbPath, int type, int quality) {
-
-        if (vidPath == null || vidPath == "") {
-            Log.println(Log.INFO, "WARNING", "Thumbnails: Video Path must not be null or empty");
-            return;
+    private String buildThumbnail(String vidPath, String thumbPath, int type, int quality) {
+        if (vidPath == null || vidPath.equals("")) {
+            Log.println(Log.INFO, "WARNING", "Thumbnails: Video Path must not be null or empty!");
+            return null;
         }
-        if (thumbPath == null || thumbPath == "") {
-            Log.println(Log.INFO, "WARNING", "Thumbnails: Thumbnail Path must not be null or empty");
-            return;
+        return thumbPath == null ? cacheDirectory(vidPath, type, quality) : userDirectory(vidPath, thumbPath, type, quality);
+
+    }
+
+    private String cacheDirectory(String vidPath, int type, int quality) {
+        Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(vidPath, MediaStore.Video.Thumbnails.MINI_KIND);
+        String sourceFileName = Uri.parse(vidPath).getLastPathSegment();
+        String thumbDirPath = mRegistrar.context().getExternalCacheDir() + File.separator + "ThumbFiles" + File.separator;
+        String tempFile = thumbDirPath + sourceFileName;
+        File tempDir = new File(thumbDirPath);
+
+        if (tempDir.exists()) {
+            clearThumbnails();
+        } else {
+            tempDir.mkdirs();
         }
 
+        switch (type) {
+            case 1:
+                try {
+                    FileOutputStream out = new FileOutputStream(new File(tempFile + ".jpg"));
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
+                    out.flush();
+                    out.close();
+                    return tempFile + ".jpg";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            case 2:
+                try {
+                    FileOutputStream out = new FileOutputStream(new File(tempFile + ".png"));
+                    bitmap.compress(Bitmap.CompressFormat.PNG, quality, out);
+                    out.flush();
+                    out.close();
+                    return tempFile + ".png";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            case 3:
+                try {
+                    FileOutputStream out = new FileOutputStream(new File(tempFile + ".webp"));
+                    bitmap.compress(Bitmap.CompressFormat.WEBP, quality, out);
+                    out.flush();
+                    out.close();
+                    return tempFile + ".webp";
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+        }
+        return "";
+    }
+
+    private String userDirectory(String vidPath, String thumbPath, int type, int quality) {
         Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(vidPath, MediaStore.Video.Thumbnails.MINI_KIND);
         switch (type) {
             case 1:
                 try {
-                    FileOutputStream out = new FileOutputStream(new File(thumbPath));
+                    FileOutputStream out = new FileOutputStream(new File(thumbPath + ".jpg"));
                     bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
                     out.flush();
                     out.close();
+                    return thumbPath + ".jpg";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -74,25 +129,39 @@ public class ThumbnailsPlugin implements MethodCallHandler {
 
             case 2:
                 try {
-                    FileOutputStream out = new FileOutputStream(new File(thumbPath));
+                    FileOutputStream out = new FileOutputStream(new File(thumbPath + ".png"));
                     bitmap.compress(Bitmap.CompressFormat.PNG, quality, out);
                     out.flush();
                     out.close();
+                    return thumbPath + ".png";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case 3:
                 try {
-                    FileOutputStream out = new FileOutputStream(new File(thumbPath));
+                    FileOutputStream out = new FileOutputStream(new File(thumbPath + "webp"));
                     bitmap.compress(Bitmap.CompressFormat.WEBP, quality, out);
                     out.flush();
                     out.close();
+                    return thumbPath + ".webp";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
+        }
+        return "";
+    }
 
+    private void clearThumbnails() {
+        String tempDirPath = mRegistrar.context().getExternalCacheDir()
+                + File.separator + "TempFiles" + File.separator;
+        File tempDir = new File(tempDirPath);
+        if (tempDir.exists()) {
+            String[] children = tempDir.list();
+            for (String file : children) {
+                new File(tempDir, file).delete();
+            }
         }
     }
 }

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:thumbnails/thumbnails.dart';
 
 void main() => runApp(new MyApp());
@@ -12,33 +9,24 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-  @override
-  void initState() {
-    super.initState();
-   // initPlatformState();
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      await Thumbnails.getThumbnail(
-        thumbOutputFile: '/storage/emulated/0/Whatsapp/Media/Test${TimeOfDay.now()}.jpg',
+  // Fetch thumbnail and store in a specified output folder
+  void _buildThumbToFile() async {
+    String thumb = await Thumbnails.getThumbnail(
+        thumbOutputFile:
+            '/storage/emulated/0/Whatsapp/Media/Test${TimeOfDay.now()}.jpg',
         videoFile: '/storage/emulated/0/Whatsapp/Media/.Statuses/Testvid.mp4',
         imageType: ThumbFormat.PNG,
-        quality: 30
-      );
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
+        quality: 30);
+    print(thumb);
+  }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
+// Fetch thumbnail and stores in app temporary directory (this is volatile)
+  void _buildThumbToCache() async {
+    String thumb = await Thumbnails.getThumbnail(
+        videoFile: '/storage/emulated/0/Whatsapp/Media/.Statuses/Testvid.mp4',
+        imageType: ThumbFormat.JPEG,
+        quality: 30);
+    print(thumb);
   }
 
   @override
@@ -49,9 +37,13 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: new Center(
-          child: FlatButton(
-            onPressed: ()=> initPlatformState(),
-            child: Text('Press Me'),
+          child: Column(
+            children: <Widget>[
+              RaisedButton(
+                  onPressed: _buildThumbToFile, child: Text('Build To File')),
+              RaisedButton(
+                  onPressed: _buildThumbToCache, child: Text('Build to Cache')),
+            ],
           ),
         ),
       ),

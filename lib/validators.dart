@@ -1,4 +1,3 @@
-
 import 'package:thumbnails/thumbnails.dart';
 
 const DEFAULT_THUMB_QUALITY = 50;
