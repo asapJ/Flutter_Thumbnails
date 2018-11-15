@@ -75,7 +75,6 @@ public class ThumbnailsPlugin implements MethodCallHandler {
             tempDir.mkdirs();
         }
         String tempFile = new File(tempDir + File.separator + sourceFileName).getPath();
-        System.out.println("JAVA CODE"+tempFile);
         switch (type) {
             case 1:
                 try {
@@ -120,7 +119,6 @@ public class ThumbnailsPlugin implements MethodCallHandler {
             fileDir.mkdirs();
         }
         String tempFile = new File(fileDir + File.separator + sourceFileName).getAbsolutePath();
-        System.out.println("ABSOLUTE JAVA CODE"+tempFile);
         switch (type) {
             case 1:
                 try {
