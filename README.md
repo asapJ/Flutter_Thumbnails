@@ -11,7 +11,7 @@ Android OS only
 add `thumbnails` as a dependency in your pubspec.yaml file.
 
 #### Add import statement
-Import the library via
+Import the library
 ``` dart
 import 'package:thumbnails/thumbnails.dart';
 ```
@@ -29,7 +29,7 @@ import 'package:thumbnails/thumbnails.dart';
 
 // Fetch thumbnail, store in app's Temporary directory output folder and return file path
     String thumb = await Thumbnails.getThumbnail(
-        videoFile: 'VIDEO PATH HERE',
+        videoFile: '[VIDEO PATH HERE]',
         imageType: ThumbFormat.JPEG,
         quality: 45);
 
