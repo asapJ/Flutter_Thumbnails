@@ -4,7 +4,7 @@ const DEFAULT_THUMB_QUALITY = 50;
 const DEFAULT_IMAGE_TYPE = ThumbFormat.JPEG;
 
 int validateQuality(int choice) {
-  if (choice <= 30 || choice > 100) return DEFAULT_THUMB_QUALITY;
+  if (choice < 10 || choice > 100 || choice == null) return DEFAULT_THUMB_QUALITY;
   return choice;
 }
 

@@ -13,20 +13,20 @@ class _MyAppState extends State<MyApp> {
   void _buildThumbToFile() async {
     String thumb = await Thumbnails.getThumbnail(
         thumbOutputFile:
-            '/storage/emulated/0/Whatsapp/Media/Test${TimeOfDay.now()}.jpg',
-        videoFile: '/storage/emulated/0/Whatsapp/Media/.Statuses/Testvid.mp4',
+            '/storage/emulated/0/Videos/Thumbnails',
+        videoFile: '/storage/emulated/0/Videos/Testvideo.mp4',
         imageType: ThumbFormat.PNG,
         quality: 30);
-    print(thumb);
+    print('path to File: $thumb');
   }
 
-// Fetch thumbnail and stores in app temporary directory (this is volatile)
+// when an output folder is not specified thumbnail are stored in app temporary directory 
   void _buildThumbToCache() async {
     String thumb = await Thumbnails.getThumbnail(
-        videoFile: '/storage/emulated/0/Whatsapp/Media/.Statuses/Testvid.mp4',
+        videoFile: '/storage/emulated/0/Videos/Testvideo.mp4',
         imageType: ThumbFormat.JPEG,
         quality: 30);
-    print(thumb);
+    print('Path to cache folder $thumb');
   }
 
   @override

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -66,17 +67,15 @@ public class ThumbnailsPlugin implements MethodCallHandler {
 
     private String cacheDirectory(String vidPath, int type, int quality) {
         Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(vidPath, MediaStore.Video.Thumbnails.MINI_KIND);
-        String sourceFileName = Uri.parse(vidPath).getLastPathSegment();
-        String thumbDirPath = mRegistrar.context().getExternalCacheDir() + File.separator + "ThumbFiles" + File.separator;
-        String tempFile = thumbDirPath + sourceFileName;
-        File tempDir = new File(thumbDirPath);
-
+        String sourceFileName = getFileName(Uri.parse(vidPath).getLastPathSegment());
+        File tempDir = new File(mRegistrar.context().getExternalCacheDir() + File.separator + "ThumbFiles" + File.separator);
         if (tempDir.exists()) {
             clearThumbnails();
         } else {
             tempDir.mkdirs();
         }
-
+        String tempFile = new File(tempDir + File.separator + sourceFileName).getPath();
+        System.out.println("JAVA CODE"+tempFile);
         switch (type) {
             case 1:
                 try {
@@ -113,15 +112,23 @@ public class ThumbnailsPlugin implements MethodCallHandler {
     }
 
     private String userDirectory(String vidPath, String thumbPath, int type, int quality) {
+        File fileDir = null;
         Bitmap bitmap = ThumbnailUtils.createVideoThumbnail(vidPath, MediaStore.Video.Thumbnails.MINI_KIND);
+        String sourceFileName = getFileName(Uri.parse(vidPath).getLastPathSegment());
+        fileDir = new File(thumbPath + File.separator);
+        if (!fileDir.exists()) {
+            fileDir.mkdirs();
+        }
+        String tempFile = new File(fileDir + File.separator + sourceFileName).getAbsolutePath();
+        System.out.println("ABSOLUTE JAVA CODE"+tempFile);
         switch (type) {
             case 1:
                 try {
-                    FileOutputStream out = new FileOutputStream(new File(thumbPath + ".jpg"));
+                    FileOutputStream out = new FileOutputStream(new File(tempFile + ".jpg"));
                     bitmap.compress(Bitmap.CompressFormat.JPEG, quality, out);
                     out.flush();
                     out.close();
-                    return thumbPath + ".jpg";
+                    return tempFile + ".jpg";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -129,22 +136,22 @@ public class ThumbnailsPlugin implements MethodCallHandler {
 
             case 2:
                 try {
-                    FileOutputStream out = new FileOutputStream(new File(thumbPath + ".png"));
+                    FileOutputStream out = new FileOutputStream(new File(tempFile + ".png"));
                     bitmap.compress(Bitmap.CompressFormat.PNG, quality, out);
                     out.flush();
                     out.close();
-                    return thumbPath + ".png";
+                    return tempFile + ".png";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             case 3:
                 try {
-                    FileOutputStream out = new FileOutputStream(new File(thumbPath + "webp"));
+                    FileOutputStream out = new FileOutputStream(new File(tempFile + "webp"));
                     bitmap.compress(Bitmap.CompressFormat.WEBP, quality, out);
                     out.flush();
                     out.close();
-                    return thumbPath + ".webp";
+                    return tempFile + ".webp";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -163,5 +170,11 @@ public class ThumbnailsPlugin implements MethodCallHandler {
                 new File(tempDir, file).delete();
             }
         }
+    }
+
+    private static final Pattern ext = Pattern.compile("(?<=.)\\.[^.]+$");
+
+    private String getFileName(String s) {
+        return ext.matcher(s).replaceAll("");
     }
 }
