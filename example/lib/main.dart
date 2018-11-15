@@ -10,18 +10,17 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // Fetch thumbnail and store in a specified output folder
-  void _buildThumbToFile() async {
+  void _toUserFolder() async {
     String thumb = await Thumbnails.getThumbnail(
-        thumbOutputFile:
-            '/storage/emulated/0/Videos/Thumbnails',
+        thumbnailFolder: '/storage/emulated/0/Videos/Thumbnails',
         videoFile: '/storage/emulated/0/Videos/Testvideo.mp4',
         imageType: ThumbFormat.PNG,
         quality: 30);
     print('path to File: $thumb');
   }
 
-// when an output folder is not specified thumbnail are stored in app temporary directory 
-  void _buildThumbToCache() async {
+// when an output folder is not specified thumbnail are stored in app temporary directory
+  void _noFolder() async {
     String thumb = await Thumbnails.getThumbnail(
         videoFile: '/storage/emulated/0/Videos/Testvideo.mp4',
         imageType: ThumbFormat.JPEG,
@@ -40,9 +39,9 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             children: <Widget>[
               RaisedButton(
-                  onPressed: _buildThumbToFile, child: Text('Build To File')),
+                  onPressed: _toUserFolder, child: Text('To Specified Folder')),
               RaisedButton(
-                  onPressed: _buildThumbToCache, child: Text('Build to Cache')),
+                  onPressed: _noFolder, child: Text('No Folder Specified')),
             ],
           ),
         ),

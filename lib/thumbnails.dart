@@ -11,12 +11,12 @@ class Thumbnails {
 
   static Future<String> getThumbnail(
       {@required String videoFile,
-      String thumbOutputFile,
+      String thumbnailFolder,
       ThumbFormat imageType,
       int quality}) async {
     var utilMap = <String, dynamic>{
       'videoFilePath': videoFile,
-      'thumbFilePath': thumbOutputFile,
+      'thumbFilePath': thumbnailFolder,
       'thumbnailFormat': validateType(imageType),
       'thumbnailQuality': validateQuality(quality)
     };
