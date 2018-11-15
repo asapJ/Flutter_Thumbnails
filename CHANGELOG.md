@@ -1,3 +1,3 @@
-## 0.0.1
+## 0.0.1 - 2018-11-14
 
-* TODO: Describe initial release.
+* Initial release
