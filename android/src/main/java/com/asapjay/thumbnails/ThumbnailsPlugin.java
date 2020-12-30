@@ -50,6 +50,7 @@ public class ThumbnailsPlugin implements MethodCallHandler {
                 result.success(thumbnailPath);
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
+                result.error("1", "Failed to create thumbnail", null);
             }
         } else {
             result.notImplemented();
