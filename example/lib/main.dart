@@ -12,10 +12,11 @@ class _MyAppState extends State<MyApp> {
   // Fetch thumbnail and store in a specified output folder
   void _toUserFolder() async {
     String thumb = await Thumbnails.getThumbnail(
-        thumbnailFolder: '/storage/emulated/0/Videos/Thumbnails',
-        videoFile: '/storage/emulated/0/Videos/Testvideo.mp4',
-        imageType: ThumbFormat.PNG,
-        quality: 30);
+      thumbnailFolder: '/storage/emulated/0/Videos/Thumbnails',
+      videoFile: '/storage/emulated/0/Videos/Testvideo.mp4',
+      imageType: ThumbFormat.PNG,
+      quality: 30,
+    );
     print('path to File: $thumb');
   }
 
@@ -38,9 +39,9 @@ class _MyAppState extends State<MyApp> {
         body: new Center(
           child: Column(
             children: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                   onPressed: _toUserFolder, child: Text('To Specified Folder')),
-              RaisedButton(
+              ElevatedButton(
                   onPressed: _noFolder, child: Text('No Folder Specified')),
             ],
           ),
